@@ -1,18 +1,22 @@
 <?php
-include('dbconn.php');
-include('functions.php');
+$connection = mysqli_connect("hostname", "username", "password", "winkel");
 
+if (!$connection) {
+    die("Connection failed: " . mysqli_connect_error());
+}
 
-// 1. Gegevens selecteren en weergeven
-$gegevens = selecteerGegevens();
-print_r($gegevens);
+$sql = "SELECT * FROM producten ORDER BY naam";
+$result = mysqli_query($connection, $sql);
 
-// 2. Gegevens toevoegen aan de database
-opslaanGegevens('Nieuw Product', 49.99, 'Dit is een nieuw product.');
+if (mysqli_num_rows($result) > 0) {
+    // Output data of each row
+    while($row = mysqli_fetch_assoc($result)) {
+        echo "Naam: " . $row["naam"] . " - Beschrijving: " . $row["beschrijving"] . "<br>";
+    }
+} else {
+    echo "0 results";
+}
 
-// 3. Gegevens wijzigen in de database (bijvoorbeeld ProductID = 1)
-wijzigGegevens(1, 39.99, 'Bijgewerkte omschrijving voor Product 1');
-
-// 4. Gegevens verwijderen uit de database (bijvoorbeeld ProductID = 2)
-verwijderGegevens(2);
+mysqli_close($connection);
 ?>
+<a href="delete.php?product_code=2">Delete second product</a>
